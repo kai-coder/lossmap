@@ -74,9 +74,10 @@ class LossMap:
             added_vectors = add_param_vectors((weighted_vector1, weighted_vector2))
 
             with torch.no_grad():
-                for (params, idx) in zip(self.model.parameters(), range(len(self.model_params))):
-                    new_params = self.model_params[idx] + added_vectors[idx].to(self.device)
-                    params.copy_(new_params)
+                with torch.amp.autocast("cuda" if torch.cuda.is_available() else "cpu"):
+                    for (params, idx) in zip(self.model.parameters(), range(len(self.model_params))):
+                        new_params = self.model_params[idx] + added_vectors[idx].to(self.device)
+                        params.copy_(new_params)
 
                 loss_map[step_num] = eval_fn(self.model)
 
