@@ -26,11 +26,12 @@ class DatasetModel(DatasetAttr):
         super().__init__(batch_size, shuffle)
         self.x = x
         self.y = y
+        self.on_epoch_end(True)
 
     def __len__(self) -> int:
         return len(self.x) // self.batch_size
 
-    def on_epoch_end(self, must_shuffle: bool=False) -> None:
+    def on_epoch_end(self, must_shuffle: bool = False) -> None:
         index_arr = np.arange(len(self.x))
 
         if self.shuffle or must_shuffle:
@@ -43,10 +44,11 @@ class DatasetModel(DatasetAttr):
         if idx >= self.__len__():
             raise IndexError()
 
+        first_idx = idx * self.batch_size
         next_idx = (idx + 1) * self.batch_size
 
-        x = torch.tensor(self.x[idx:next_idx],  dtype=torch.float32)
-        y = torch.tensor(self.y[idx:next_idx, None],  dtype=torch.float32)
+        x = torch.tensor(self.x[first_idx:next_idx],  dtype=torch.float32)
+        y = torch.tensor(self.y[first_idx:next_idx, None],  dtype=torch.float32)
 
         return x, y
 
@@ -68,9 +70,10 @@ class ClothesDataset(DatasetModel):
         if idx >= self.__len__():
             raise IndexError()
 
+        first_idx = idx * self.batch_size
         next_idx = (idx + 1) * self.batch_size
 
-        x = torch.tensor(self.x[idx:next_idx],  dtype=torch.float32)
-        y = torch.tensor(self.y[idx:next_idx],  dtype=torch.long)
+        x = torch.tensor(self.x[first_idx:next_idx],  dtype=torch.float32)
+        y = torch.tensor(self.y[first_idx:next_idx],  dtype=torch.long)
 
         return x, y

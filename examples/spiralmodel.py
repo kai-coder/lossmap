@@ -10,7 +10,6 @@ from functools import partial
 trainData = SpiralDataset(1000, 0.5, 32, True)
 testData = SpiralDataset(1000, 0.5, 32, False)
 
-
 class Model(nn.Module):
     def __init__(self) -> None:
         super().__init__()
@@ -33,9 +32,9 @@ class Model(nn.Module):
 model = Model()
 optimizer = torch.optim.Adam(model.parameters())
 loss_fn = nn.BCEWithLogitsLoss()
-train_model_class = TrainModelClass(model, optimizer, loss_fn)
+train_model_class = TrainModelClass(optimizer, loss_fn)
 
-train_model_class.train(20, trainData, testData)
+train_model_class.train(20, trainData, testData, model)
 
 loss_map = lossmap.LossMap(model)
 x, y, loss = loss_map.get_loss_landscape(-1, 1, 1000, partial(train_model_class.run_epoch, trainData, False))

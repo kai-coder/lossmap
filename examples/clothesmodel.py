@@ -7,12 +7,14 @@ from trainmodelclass import TrainModelClass
 from functools import partial
 import torchvision
 import numpy as np
+import os
 
-trainData = torchvision.datasets.FashionMNIST("MNIST_PATH", True)
+print(os.getenv("MNIST_PATH"))
+trainData = torchvision.datasets.FashionMNIST(os.environ.get("MNIST_PATH"), True)
 trainX = np.array([np.array(i[0]) for i in trainData])[:20000]
 trainy = np.array([i[1] for i in trainData])[:20000]
 
-testData = torchvision.datasets.FashionMNIST("MNIST_PATH", False)
+testData = torchvision.datasets.FashionMNIST(os.environ.get("MNIST_PATH"), False)
 testX = np.array([np.array(i[0]) for i in testData])[:3000]
 testy = np.array([i[1] for i in testData])[:3000]
 
@@ -44,12 +46,12 @@ class Model(nn.Module):
 model = Model()
 optimizer = torch.optim.Adam(model.parameters())
 loss_fn = nn.CrossEntropyLoss()
-train_model_class = TrainModelClass(model, optimizer, loss_fn)
+train_model_class = TrainModelClass(optimizer, loss_fn)
 
-train_model_class.train(10, trainData, testData)
+train_model_class.train(10, trainData, testData, model)
 
 loss_map = lossmap.LossMap(model)
-x, y, loss = loss_map.get_loss_landscape(-10, 10, 1000, partial(train_model_class.run_epoch, trainData, False))
+x, y, loss = loss_map.get_loss_landscape(-1, 1, 100, partial(train_model_class.run_epoch, trainData, False))
 
 fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
 ax.plot_wireframe(x, y, loss, color='C0')

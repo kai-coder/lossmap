@@ -1,0 +1,9 @@
+[project]
+name = "lossmap"
+dynamic = ["version"]
+authors = [
+  {name = "Kai Hammond", email = "kaihammond2007@gmail.com"}
+]
+description = "A tool to visualize the loss landscape of neural networks"
+readme = "README.md"
+license = "MIT"
