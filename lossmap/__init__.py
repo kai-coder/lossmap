@@ -75,8 +75,8 @@ class LossMap:
 
             with torch.no_grad():
                 for (params, idx) in zip(self.model.parameters(), range(len(self.model_params))):
-                    new_params = self.model_params[idx] + added_vectors[idx]
-                    params.copy_(new_params.to(self.device))
+                    new_params = self.model_params[idx] + added_vectors[idx].to(self.device)
+                    params.copy_(new_params)
 
                 loss_map[step_num] = eval_fn(self.model)
 
