@@ -15,9 +15,10 @@ def add_param_vectors(param_vector: tuple[list[torch.Tensor], ...]) -> list[torc
 
 
 class LossMap:
-    def __init__(self, model: nn.Module) -> None:
+    def __init__(self, model: nn.Module, device: torch.device) -> None:
         self.model = model
         self.model_params = self.get_params()
+        self.device = device
 
     def get_params(self) -> list[torch.Tensor]:
         model_params = []
@@ -74,7 +75,8 @@ class LossMap:
 
             with torch.no_grad():
                 for (params, idx) in zip(self.model.parameters(), range(len(self.model_params))):
-                    params.copy_(self.model_params[idx] + added_vectors[idx])
+                    new_params = self.model_params[idx] + added_vectors[idx]
+                    params.copy_(new_params.to(self.device))
 
                 loss_map[step_num] = eval_fn(self.model)
 
