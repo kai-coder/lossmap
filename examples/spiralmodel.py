@@ -1,12 +1,10 @@
 import torch
-
 import lossmap
-import numpy as np
 import torch.nn as nn
 from spiraldata import SpiralDataset
 import matplotlib.pyplot as plt
-from numpy.typing import NDArray
 from trainmodelclass import TrainModelClass
+from functools import partial
 
 
 trainData = SpiralDataset(1000, 0.5, 32, True)
@@ -37,4 +35,12 @@ optimizer = torch.optim.Adam(model.parameters())
 loss_fn = nn.BCEWithLogitsLoss()
 train_model_class = TrainModelClass(model, optimizer, loss_fn)
 
-train_model_class.train(50, trainData, testData)
+train_model_class.train(20, trainData, testData)
+
+loss_map = lossmap.LossMap(model)
+x, y, loss = loss_map.get_loss_landscape(-1, 1, 1000, partial(train_model_class.run_epoch, trainData, False))
+
+fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
+ax.plot_wireframe(x, y, loss, color='C0')
+plt.show()
+

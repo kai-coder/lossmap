@@ -10,13 +10,16 @@ class TrainModelClass:
         self.optimizer = optimizer
         self.loss_fn = loss_fn
 
-    def run_epoch(self, dataset: DatasetAttr, train: bool) -> float:
+    def run_epoch(self, dataset: DatasetAttr, train: bool, model: nn.Module = None) -> float:
         total_loss = 0
         for data_point in dataset:
             x, y = data_point
 
             with torch.set_grad_enabled(train):
-                out = self.model(x)
+                if model is not None:
+                    out = model(x)
+                else:
+                    out = self.model(x)
                 loss = self.loss_fn(out, y)
 
             if train:
@@ -28,10 +31,10 @@ class TrainModelClass:
 
         return total_loss / dataset.__len__()
 
-    def train(self, epochs: int, train_data: DatasetAttr, test_data: DatasetAttr) -> None:
+    def train(self, epochs: int, train_data: DatasetAttr, test_data: DatasetAttr, model: nn.Module = None) -> None:
         for epoch_num in range(epochs):
-            train_loss = self.run_epoch(train_data, True)
-            test_loss = self.run_epoch(test_data, False)
+            train_loss = self.run_epoch(train_data, True, model)
+            test_loss = self.run_epoch(test_data, False, model)
 
             print("Epoch: {0}; Train Loss: {1:.3f}; Test Loss: {2:.3f}".format(epoch_num, train_loss, test_loss))
 

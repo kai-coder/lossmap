@@ -9,5 +9,6 @@ class DatasetAttr(Dataset):
     def on_epoch_end(self) -> None:
         print("user must define on_epoch_end")
 
-    def __len__(self):
+    def __len__(self) -> int:
         print("user must define __len__")
+        return -1

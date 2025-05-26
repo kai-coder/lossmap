@@ -21,13 +21,11 @@ def generate_spiral_data(num: int, noise: float) -> tuple[NDArray[np.float_], ND
     return coordinates, value
 
 
-class SpiralDataset(DatasetAttr):
-    def __init__(self, num: int, noise: float, batch_size: int, shuffle: bool) -> None:
+class DatasetModel(DatasetAttr):
+    def __init__(self, x: np.ndarray, y: np.ndarray, batch_size: int, shuffle: bool) -> None:
         super().__init__(batch_size, shuffle)
-        self.x, self.y = generate_spiral_data(num, noise)
-        self.x /= self.x.max()
-
-        self.on_epoch_end(True)
+        self.x = x
+        self.y = y
 
     def __len__(self) -> int:
         return len(self.x) // self.batch_size
@@ -49,5 +47,30 @@ class SpiralDataset(DatasetAttr):
 
         x = torch.tensor(self.x[idx:next_idx],  dtype=torch.float32)
         y = torch.tensor(self.y[idx:next_idx, None],  dtype=torch.float32)
+
+        return x, y
+
+
+class SpiralDataset(DatasetModel):
+    def __init__(self, num: int, noise: float, batch_size: int, shuffle: bool) -> None:
+        x, y = generate_spiral_data(num, noise)
+        x /= x.max()
+        super().__init__(x, y, batch_size, shuffle)
+
+
+class ClothesDataset(DatasetModel):
+    def __init__(self, x: np.ndarray, y: np.ndarray, batch_size: int, shuffle: bool) -> None:
+        x = x.astype(np.float64)
+        x /= x.max()
+        super().__init__(x, y, batch_size, shuffle)
+
+    def __getitem__(self, idx: int) -> tuple[torch.Tensor, torch.Tensor]:
+        if idx >= self.__len__():
+            raise IndexError()
+
+        next_idx = (idx + 1) * self.batch_size
+
+        x = torch.tensor(self.x[idx:next_idx],  dtype=torch.float32)
+        y = torch.tensor(self.y[idx:next_idx],  dtype=torch.long)
 
         return x, y
