@@ -8,13 +8,15 @@ from functools import partial
 import torchvision
 import numpy as np
 import os
+from dotenv import load_dotenv
 
-print(os.getenv("MNIST_PATH"))
-trainData = torchvision.datasets.FashionMNIST(os.environ.get("MNIST_PATH"), True)
+load_dotenv()
+
+trainData = torchvision.datasets.FashionMNIST(os.getenv("MNIST_PATH"), True)
 trainX = np.array([np.array(i[0]) for i in trainData])[:20000]
 trainy = np.array([i[1] for i in trainData])[:20000]
 
-testData = torchvision.datasets.FashionMNIST(os.environ.get("MNIST_PATH"), False)
+testData = torchvision.datasets.FashionMNIST(os.getenv("MNIST_PATH"), False)
 testX = np.array([np.array(i[0]) for i in testData])[:3000]
 testy = np.array([i[1] for i in testData])[:3000]
 
