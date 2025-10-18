@@ -15,7 +15,7 @@ def add_param_vectors(param_vector: tuple[list[torch.Tensor], ...]) -> list[torc
 
 
 class LossMap:
-    def __init__(self, model: nn.Module, device: torch.device) -> None:
+    def __init__(self, model: nn.Module, device: torch.device = torch.get_default_device()) -> None:
         self.model = model
         self.model_params = self.get_params()
         self.device = device
@@ -52,7 +52,7 @@ class LossMap:
 
     def get_loss_landscape(self, min_explore: float, max_explore: float, data_num: float,
                            eval_fn: Callable[[nn.Module], float]) \
-            -> tuple[NDArray[np.float_], NDArray[np.float_], NDArray[np.float_],]:
+            -> tuple[NDArray[np.float64], NDArray[np.float64], NDArray[np.float64],]:
         vector1 = self.get_unit_param_vector()
         vector2 = self.get_unit_param_vector()
 

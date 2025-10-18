@@ -4,7 +4,7 @@ from datasetattr import DatasetAttr
 import torch
 
 
-def generate_spiral_data(num: int, noise: float) -> tuple[NDArray[np.float_], NDArray[np.bool_]]:
+def generate_spiral_data(num: int, noise: float) -> tuple[NDArray[np.float64], NDArray[np.bool_]]:
     radii = 3 * np.pi * np.random.uniform(-1, 1, num)
     theta = np.abs(radii)
 

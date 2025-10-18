@@ -41,5 +41,8 @@ x, y, loss = loss_map.get_loss_landscape(-1, 1, 1000, partial(train_model_class.
 
 fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
 ax.plot_wireframe(x, y, loss, color='C0')
+ax.set_xlabel("Vector 1 Coefficient")
+ax.set_ylabel("Vector 2 Coefficient")
+ax.set_zlabel("Loss")
 plt.show()
 
